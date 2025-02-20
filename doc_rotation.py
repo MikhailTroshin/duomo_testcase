@@ -11,7 +11,7 @@ def get_doc_rotation_angle(img, block=21, c=5):
         255,
         cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
         cv2.THRESH_BINARY_INV,
-        blockSize,
+        block,
         c,
     )
     
@@ -60,7 +60,7 @@ def main():
         image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
         
         st.image(image, channels="BGR", caption="Image of a document", use_container_width=True)
-        angle = get_doc_rotation_angle(image)
+        angle = get_doc_rotation_angle(image, 11, 20)
         
         if angle is not None:
             if angle > 3 or angle < -3:
