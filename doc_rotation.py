@@ -4,7 +4,7 @@ import streamlit as st
 
 def get_doc_rotation_angle(img, block=21, c=5):
     # prepare an image
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
     thresh = cv2.adaptiveThreshold(
         blurred,
