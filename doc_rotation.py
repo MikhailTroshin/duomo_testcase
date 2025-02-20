@@ -58,8 +58,7 @@ def main():
     if uploaded_file is not None:
         file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
         image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-        
-        st.image(image, channels="BGR", caption="Image of a document", use_container_width=True)
+        st.image(image, width=400, channels="BGR", caption="Image of a document", use_container_width=True)
         angle = get_doc_rotation_angle(image, 11, 20)
         
         if angle is not None:
