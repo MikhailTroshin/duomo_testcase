@@ -51,7 +51,7 @@ def main():
         image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
         
         st.image(image, channels="BGR", caption="Image of a document", use_column_width=True)
-        angle, result = get_doc_rotation_angle(image)
+        angle = get_doc_rotation_angle(image)
         
         if angle is not None:
             if angle > 3 or angle < -3:
