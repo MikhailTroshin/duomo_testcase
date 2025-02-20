@@ -2,40 +2,49 @@ import cv2
 import numpy as np
 import streamlit as st
 
-
-def get_doc_rotation_angle(image):
+def get_doc_rotation_angle(img, block=21, c=5):
     # prepare an image
-    gray = cv2.cvtColor(
-      image,
-      cv2.COLOR_BGR2GRAY
-    )
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
     thresh = cv2.adaptiveThreshold(
-      gray,
-      255,
-      cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-      cv2.THRESH_BINARY_INV,
-      11,
-      2
+        blurred,
+        255,
+        cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+        cv2.THRESH_BINARY_INV,
+        blockSize,
+        c,
     )
-  
-    # get countures
-    cntrs, _ = cv2.findContours(
-      thresh,
-      cv2.RETR_EXTERNAL,
-      cv2.CHAIN_APPROX_SIMPLE
+    
+    # get edges and lines
+    edges = cv2.Canny(thresh, 50, 150, apertureSize=3)
+    lines = cv2.HoughLinesP(
+        edges,
+        1,
+        np.pi / 180,
+        threshold=100,
+        minLineLength=200,
+        maxLineGap=10
     )
-    if not cntrs:
+    
+    if lines is None:
         return None
-    largest_cntr = max(cntrs, key=cv2.contourArea)
-    boundary = cv2.minAreaRect(largest_cntr)
 
-    # get angle
-    angle = boundary[-1]
-    if angle > 45:
-        angle = 90 - angle
-    elif angle < -45:
-        angle = -90 - angle
-    return angle
+    # get angles for all lines
+    angles = []
+    for line in lines:
+        x1, y1, x2, y2 = line[0]
+        angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi
+        angles.append(angle)
+
+    m_angle = np.median(angles)
+    
+    # Корректируем угол, чтобы он был в диапазоне [-45, 45]
+    if m_angle > 45:
+        m_angle = 90 - m_angle
+    elif m_angle < -45:
+        m_angle = -90 - m_angle
+    
+    return m_angle
 
 def main():
     st.title("Get Document Rotation")
