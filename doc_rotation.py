@@ -44,7 +44,7 @@ def get_doc_rotation_angle(img, block=21, c=5):
     elif m_angle < -45:
         m_angle = -90 - m_angle
     
-    return m_angle
+    return round(m_angle, 1)
 
 def main():
     st.title("Get Document Rotation")
